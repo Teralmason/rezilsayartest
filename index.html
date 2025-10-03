@@ -1,315 +1,188 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rezil Sayacı</title>
-  <style>
-    :root{--bg:#0f1724;--card:#0b1220;--accent:#ff6b6b;--muted:#9aa4b2;--glass: rgba(255,255,255,0.03)}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#071029 0%, #071827 60%);color:#e6eef6;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .app{width:100%;max-width:980px;animation:fadeIn 0.7s ease}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
-    h1{font-size:22px;margin:0}
-    p.lead{margin:0;color:var(--muted);font-size:13px}
-    .topbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .btn{background:var(--accent);border:none;color:white;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:600;box-shadow:0 6px 18px rgba(255,107,107,0.14);transition:transform 0.2s ease, box-shadow 0.2s ease}
-    .btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(255,107,107,0.25)}
-    .btn:active{transform:scale(0.96)}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);box-shadow:none;color:var(--muted);padding:8px 10px}
-    .grid{display:grid;grid-template-columns:1fr 320px;gap:16px}
-    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-    .card{background:linear-gradient(180deg,var(--card), #061022);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 18px rgba(2,6,23,0.6);transition:transform 0.2s ease}
-    .card:hover{transform:translateY(-3px)}
-    .user-name{font-weight:700;margin-bottom:6px}
-    .count{font-size:28px;font-weight:800;transition:transform 0.3s ease}
-    .small{color:var(--muted);font-size:13px}
-    .user-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-    .big-btn{flex:1;padding:10px;border-radius:10px;border:none;font-weight:700;cursor:pointer;transition:transform 0.15s ease}
-    .big-btn:active{transform:scale(0.95)}
-    .big-btn.rezil{background:linear-gradient(90deg, #ff8a8a, #ff5f5f);color:#111;box-shadow:0 3px 8px rgba(255,95,95,0.3)}
-    .big-btn.view{background:var(--glass);color:var(--muted);border:1px solid rgba(255,255,255,0.03)}
-    .panel{background:linear-gradient(180deg,#071328,#05111f);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-    .leader-row{display:flex;justify-content:space-between;padding:8px 6px;border-radius:8px;transition:background 0.2s ease}
-    .leader-row:nth-child(odd){background:rgba(255,255,255,0.01)}
-    .leader-row:hover{background:rgba(255,255,255,0.05)}
-    details summary{cursor:pointer;list-style:none;outline:none;transition:color 0.2s ease}
-    details[open] summary{color:var(--accent)}
-    table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{padding:8px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:13px}
-    th{color:var(--muted);font-weight:600}
-    footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
-    .date-filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    input[type=date]{padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
-    .small-muted{color:var(--muted);font-size:12px}
-    /* Loading overlay */
-    .overlay{position:fixed;inset:0;background:rgba(7,10,20,0.85);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;color:white}
-    .spinner{width:64px;height:64px;border-radius:50%;border:6px solid rgba(255,255,255,0.08);border-top-color:var(--accent);animation:spin 1s linear infinite;margin-bottom:14px}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .overlay .text{color:var(--muted);font-size:14px}
-    @media(max-width:860px){.grid{grid-template-columns:1fr;}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rezil Sayacı</title>
+<style>
+:root{--bg:#0f1724;--card:#0b1220;--accent:#ff6b6b;--muted:#9aa4b2;--glass: rgba(255,255,255,0.03)}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#071029 0%, #071827 60%);color:#e6eef6;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.app{width:100%;max-width:980px;animation:fadeIn 0.7s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+h1{font-size:22px;margin:0}
+p.lead{margin:0;color:var(--muted);font-size:13px}
+.topbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{background:var(--accent);border:none;color:white;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:600;box-shadow:0 6px 18px rgba(255,107,107,0.14);transition:transform 0.2s ease, box-shadow 0.2s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(255,107,107,0.25)}
+.btn:active{transform:scale(0.96)}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);box-shadow:none;color:var(--muted);padding:8px 10px}
+.grid{display:grid;grid-template-columns:1fr 320px;gap:16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.card{background:linear-gradient(180deg,var(--card), #061022);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 18px rgba(2,6,23,0.6);transition:transform 0.2s ease}
+.card:hover{transform:translateY(-3px)}
+.user-name{font-weight:700;margin-bottom:6px}
+.count{font-size:28px;font-weight:800;transition:transform 0.3s ease}
+.small{color:var(--muted);font-size:13px}
+.user-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.big-btn{flex:1;padding:10px;border-radius:10px;border:none;font-weight:700;cursor:pointer;transition:transform 0.15s ease}
+.big-btn:active{transform:scale(0.95)}
+.big-btn.rezil{background:linear-gradient(90deg, #ff8a8a, #ff5f5f);color:#111;box-shadow:0 3px 8px rgba(255,95,95,0.3)}
+.big-btn.view{background:var(--glass);color:var(--muted);border:1px solid rgba(255,255,255,0.03)}
+.panel{background:linear-gradient(180deg,#071328,#05111f);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.leader-row{display:flex;justify-content:space-between;padding:8px 6px;border-radius:8px;transition:background 0.2s ease}
+.leader-row:nth-child(odd){background:rgba(255,255,255,0.01)}
+.leader-row:hover{background:rgba(255,255,255,0.05)}
+details summary{cursor:pointer;list-style:none;outline:none;transition:color 0.2s ease}
+details[open] summary{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:8px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:13px}
+th{color:var(--muted);font-weight:600}
+footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
+.date-filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input[type=date]{padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+.small-muted{color:var(--muted);font-size:12px}
+@media(max-width:860px){.grid{grid-template-columns:1fr;}}
+</style>
 </head>
 <body>
-  <div id="overlay" class="overlay" aria-hidden="true">
-    <div class="spinner" role="img" aria-label="yükleniyor"></div>
-    <div class="text">Veriler yükleniyor…</div>
-  </div>
-
-  <div class="app" id="app" style="display:none">
-    <header>
-      <div>
-        <h1>Rezil Sayacı</h1>
-        <p class="lead">Günün rezilliklerini kaydet, kim ne kadar rezil olmuş gör.</p>
-      </div>
-      <div class="topbar">
-        <div class="date-filter">
-          <label class="small-muted">Gün:</label>
-          <input id="datePicker" type="date" />
-        </div>
-        <button id="resetBtn" class="btn ghost">Tümünü Sıfırla</button>
-        <button id="exportBtn" class="btn">Dışa Aktar</button>
-      </div>
-    </header>
-
-    <main class="grid">
-      <section>
-        <div class="cards" id="cards"></div>
-
-        <div style="margin-top:12px" class="card">
-          <h3 style="margin:0 0 8px 0">Ayrıntılı Kayıtlar</h3>
-          <div id="logs"></div>
-        </div>
-      </section>
-
-      <aside>
-        <div class="panel">
-          <h3 style="margin:0 0 10px 0">Genel Sıralama</h3>
-          <div id="leaderboard"></div>
-        </div>
-
-        <div style="height:12px"></div>
-
-        <div class="panel">
-          <h4 style="margin:0 0 8px 0">Seçili Gün Sıralaması</h4>
-          <div id="dayBoard"></div>
-        </div>
-      </aside>
-    </main>
-
-    <footer>
-      <p class="small-muted">Veriler Google Sheets üzerinde saklanır.</p>
-    </footer>
-  </div>
+<div class="app" id="app">
+<header>
+<div>
+<h1>Rezil Sayacı</h1>
+<p class="lead">Günün rezilliklerini kaydet, kim ne kadar rezil olmuş gör.</p>
+</div>
+<div class="topbar">
+<div class="date-filter">
+<label class="small-muted">Gün:</label>
+<input id="datePicker" type="date" />
+</div>
+</div>
+</header>
+<main class="grid">
+<section>
+<div class="cards" id="cards"></div>
+<div style="margin-top:12px" class="card">
+<h3 style="margin:0 0 8px 0">Ayrıntılı Kayıtlar</h3>
+<div id="logs"></div>
+</div>
+</section>
+<aside>
+<div class="panel">
+<h3 style="margin:0 0 10px 0">Genel Sıralama</h3>
+<div id="leaderboard"></div>
+</div>
+<div style="height:12px"></div>
+<div class="panel">
+<h4 style="margin:0 0 8px 0">Seçili Gün Sıralaması</h4>
+<div id="dayBoard"></div>
+</div>
+</aside>
+</main>
+<footer>
+<p class="small-muted">Veriler Google Sheets üzerinde saklanır.</p>
+</footer>
+</div>
 
 <script>
 (async function(){
-  const USERS = [
-    {id:'mehmet', name:'Mehmet'},
-    {id:'batu',  name:'Batu'},
-    {id:'abdü',  name:'Abdü'},
-    {id:'kemal', name:'Kemal'}
-  ];
-  const API_URL = "https://sheetdb.io/api/v1/ta96sswdqa599";
-  const dateInput = document.getElementById('datePicker');
-  const overlay = document.getElementById('overlay');
-  const appRoot = document.getElementById('app');
-  const todayISO = ()=> new Date().toISOString().slice(0,10);
-  dateInput.value = todayISO();
+const USERS=[
+{id:'mehmet',name:'Mehmet'},
+{id:'batu',name:'Batu'},
+{id:'abdü',name:'Abdü'},
+{id:'kemal',name:'Kemal'}
+];
+const API_URL="https://sheetdb.io/api/v1/ta96sswdqa599";
+const dateInput=document.getElementById('datePicker');
+const todayISO=()=>new Date().toISOString().slice(0,10);
+dateInput.value=todayISO();
 
-  let localData = null; // <<< burası önemli, artık tek kaynak
-
-  async function safeFetch(url, opts){
-    try{
-      const res = await fetch(url, opts);
-      if(!res.ok){ const text = await res.text().catch(()=>res.statusText); throw new Error(res.status + ' ' + res.statusText + ' — ' + text);}
-      return res;
-    }catch(err){ console.error('Fetch hata:', err); throw err; }
-  }
-
-  async function load(){
-    const res = await safeFetch(API_URL);
-    const raw = await res.json();
-    const obj = {users:{}};
-    for(const u of USERS) obj.users[u.id] = {name:u.name, total:0, byDate:{}};
+// Veriyi çek
+async function load(){
+  try{
+    const res=await fetch(API_URL);
+    const raw=await res.json();
+    const obj={users:{}};
     raw.forEach(row=>{
-      const id = String(row.id||'').trim(); if(!id) return;
-      let byDate = {};
-      try { byDate = row.byDate ? JSON.parse(row.byDate) : {}; } catch(e){ byDate = {}; }
-      obj.users[id] = { name: row.name || (USERS.find(x=>x.id===id)||{name:id}).name, total: Number(row.total||0), byDate };
+      const u=USERS.find(x=>x.id===row.id);
+      if(!u) return;
+      let byDate={};
+      try{byDate=JSON.parse(row.byDate||"{}");}catch(e){}
+      obj.users[row.id]={name:u.name,total:Number(row.total||0),byDate};
     });
     return obj;
+  }catch(e){
+    alert("Veri çekilemedi!");
+    return {users:{}};
   }
+}
 
-  async function updateRow(id, payload){
-    const body = { data: [ {
-      id: payload.id,
-      name: payload.name,
-      total: payload.total,
-      byDate: JSON.stringify(payload.byDate)
-    } ] };
-    const url = API_URL + '/id/' + encodeURIComponent(id);
-    await safeFetch(url, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+// REZİL! ekleme
+async function increment(userId){
+  const data=await load();
+  const user=data.users[userId];
+  const day=dateInput.value||todayISO();
+  user.byDate[day]=(user.byDate[day]||0)+1;
+  user.total=Object.values(user.byDate).reduce((a,b)=>a+b,0);
+  // SheetDB POST
+  await fetch(API_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({data:{id:userId,total:user.total,byDate:JSON.stringify(user.byDate)}})
+  });
+  render();
+}
+
+// Render fonksiyonları
+function renderCards(data){
+  const wrap=document.getElementById('cards');wrap.innerHTML='';
+  for(const u of USERS){
+    const user=data.users[u.id];
+    const card=document.createElement('div');card.className='card';
+    card.innerHTML=`
+    <div class="user-name">${user.name}</div>
+    <div class="count">${user.total}</div>
+    <div class="small">Toplam rezillik</div>
+    <div class="user-actions">
+      <button class="big-btn rezil" data-id="${u.id}">REZİL!</button>
+      <button class="big-btn view" data-id="${u.id}">Ayrıntılar</button>
+    </div>`;
+    wrap.appendChild(card);
   }
+  wrap.querySelectorAll('.big-btn.rezil').forEach(btn=>btn.addEventListener('click',e=>increment(e.currentTarget.dataset.id)));
+}
 
-  async function appendRow(payload){
-    const body = { data: [ {
-      id: payload.id,
-      name: payload.name,
-      total: payload.total,
-      byDate: JSON.stringify(payload.byDate)
-    } ] };
-    await safeFetch(API_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
-  }
+function renderLeaderboard(data){
+  const lb=document.getElementById('leaderboard');lb.innerHTML='';
+  const arr=Object.entries(data.users).map(([id,u])=>({id,name:u.name,total:u.total}));
+  arr.sort((a,b)=>b.total-a.total);
+  arr.forEach(r=>{
+    const row=document.createElement('div');row.className='leader-row';
+    row.innerHTML=`<div>${r.name}</div><div style="font-weight:800">${r.total}</div>`;lb.appendChild(row);
+  });
+}
 
-  // --- SORUN ÇÖZÜLDÜ: art arda +1 olacak ---
-  async function increment(userId){
-    try{
-      if(!localData) localData = await load();
-      const user = localData.users[userId] || {name:userId, total:0, byDate:{}};
-      const day = dateInput.value || todayISO();
-      user.byDate[day] = (user.byDate[day] || 0) + 1;
-      user.total = Object.values(user.byDate).reduce((a,b)=>a+b,0);
+function renderDayBoard(data){
+  const selDay=dateInput.value||todayISO();
+  const el=document.getElementById('dayBoard');el.innerHTML='';
+  const arr=Object.entries(data.users).map(([id,u])=>({id,name:u.name,dayCount:(u.byDate[selDay]||0)}));
+  arr.sort((a,b)=>b.dayCount-a.dayCount);
+  arr.forEach(r=>{
+    const row=document.createElement('div');row.className='leader-row';
+    row.innerHTML=`<div>${r.name}</div><div style="font-weight:800">${r.dayCount}</div>`;el.appendChild(row);
+  });
+}
 
-      try{
-        await updateRow(userId, { id: userId, name: user.name, total: user.total, byDate: user.byDate });
-      }catch(e){
-        await appendRow({ id: userId, name: user.name, total: user.total, byDate: user.byDate });
-      }
+async function render(){
+  const data=await load();
+  renderCards(data);
+  renderLeaderboard(data);
+  renderDayBoard(data);
+}
 
-      await render(); // güncel localData ile render
-    }catch(err){ alert('Puan eklenirken hata oldu: '+(err.message||err)); }
-  }
-
-  async function resetUser(userId){
-    try{
-      const payload = { id:userId, name: USERS.find(u=>u.id===userId)?.name || userId, total:0, byDate:{} };
-      try{ await updateRow(userId, payload); } catch(e){ await appendRow(payload); }
-      if(localData) localData.users[userId] = payload;
-      await render();
-    }catch(err){ alert('Kullanıcı sıfırlanırken hata: '+(err.message||err)); }
-  }
-
-  async function resetAll(){
-    if(!confirm('Tüm istatistikleri sıfırlamak istediğine emin misin?')) return;
-    for(const u of USERS){ await resetUser(u.id); }
-    alert('Tüm kullanıcılar sıfırlandı.');
-  }
-
-  async function exportJson(){
-    const data = localData || await load();
-    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download='rezil-sayaci-'+todayISO()+'.json'; a.click(); URL.revokeObjectURL(url);
-  }
-
-  function renderCards(data){
-    const wrap=document.getElementById('cards');wrap.innerHTML='';
-    for(const u of USERS){
-      const user=data.users[u.id] || {name:u.name, total:0, byDate:{}};
-      const card=document.createElement('div');card.className='card';
-      card.innerHTML=`
-        <div class="user-name">${user.name}</div>
-        <div class="count">${user.total}</div>
-        <div class="small">Toplam rezillik</div>
-        <div class="user-actions">
-          <button class="big-btn rezil" data-id="${u.id}">REZİL!</button>
-          <button class="big-btn view" data-id="${u.id}">Ayrıntılar</button>
-        </div>`;
-      wrap.appendChild(card);
-    }
-    wrap.querySelectorAll('.big-btn.rezil').forEach(btn=>btn.addEventListener('click',e=>increment(e.currentTarget.dataset.id)));
-    wrap.querySelectorAll('.big-btn.view').forEach(btn=>btn.addEventListener('click', e=>{
-      const id=e.currentTarget.dataset.id;
-      const el=document.getElementById('user-'+id);
-      if(el){ el.open = !el.open; el.scrollIntoView({behavior:'smooth', block:'center'}); }
-    }));
-  }
-
-  function renderLeaderboard(data){
-    const lb=document.getElementById('leaderboard');lb.innerHTML='';
-    const arr=Object.entries(data.users).map(([id,u])=>({id,name:u.name,total:u.total}));
-    arr.sort((a,b)=>b.total - a.total);
-    for(const r of arr){
-      const row=document.createElement('div');row.className='leader-row';
-      row.innerHTML=`<div>${r.name}</div><div style="font-weight:800">${r.total}</div>`;
-      lb.appendChild(row);
-    }
-  }
-
-  function renderDayBoard(data){
-    const selDay = dateInput.value || todayISO();
-    const el=document.getElementById('dayBoard');el.innerHTML='';
-    const arr=Object.entries(data.users).map(([id,u])=>({id,name:u.name,dayCount:(u.byDate[selDay]||0)}));
-    arr.sort((a,b)=>b.dayCount - a.dayCount);
-    for(const r of arr){
-      const row=document.createElement('div');row.className='leader-row';
-      row.innerHTML=`<div>${r.name}</div><div style="font-weight:800">${r.dayCount}</div>`;
-      el.appendChild(row);
-    }
-  }
-
-  function renderLogs(data){
-    const wrap=document.getElementById('logs');wrap.innerHTML='';
-    for(const u of USERS){
-      const user = data.users[u.id] || {name:u.name, total:0, byDate:{}};
-      const det=document.createElement('details');det.id='user-'+u.id;det.style.marginBottom='10px';
-      const summary=document.createElement('summary');summary.innerHTML=`<strong>${user.name}</strong> — Toplam: ${user.total}`;det.appendChild(summary);
-
-      const tbl=document.createElement('table');
-      const thead=document.createElement('thead'); thead.innerHTML='<tr><th>Tarih</th><th>Adet</th></tr>'; tbl.appendChild(thead);
-      const tbody=document.createElement('tbody');
-
-      const dates = Object.entries(user.byDate).sort((a,b)=>b[0].localeCompare(a[0]));
-      if(dates.length===0){
-        const tr=document.createElement('tr'); tr.innerHTML='<td colspan="2" class="small-muted">Kayıt yok</td>'; tbody.appendChild(tr);
-      } else {
-        for(const [date,count] of dates){
-          const tr=document.createElement('tr');
-          tr.innerHTML=`<td>${date}</td><td style="font-weight:800">${count}</td>`;
-          tbody.appendChild(tr);
-        }
-      }
-      tbl.appendChild(tbody);
-
-      const foot=document.createElement('div');foot.style.marginTop='8px';foot.style.display='flex';foot.style.gap='8px';
-      const addBtn=document.createElement('button'); addBtn.className='btn'; addBtn.textContent='Bugüne +1';
-      addBtn.addEventListener('click', ()=>{ dateInput.value = todayISO(); increment(u.id); det.open = true; });
-
-      const removeDayBtn=document.createElement('button'); removeDayBtn.className='btn ghost'; removeDayBtn.textContent='Bu Kullanıcıyı Sıfırla';
-      removeDayBtn.addEventListener('click', ()=>{ if(!confirm(`${user.name} tüm kayıtlarını silmek istediğine emin misin?`)) return; resetUser(u.id); });
-
-      foot.appendChild(addBtn); foot.appendChild(removeDayBtn);
-      det.appendChild(tbl); det.appendChild(foot);
-      wrap.appendChild(det);
-    }
-  }
-
-  async function render(){
-    try{
-      if(!localData) localData = await load();
-      renderCards(localData);
-      renderLeaderboard(localData);
-      renderDayBoard(localData);
-      renderLogs(localData);
-    }catch(err){ console.error(err); alert('Görüntüleme sırasında hata: ' + (err.message || err)); }
-  }
-
-  document.getElementById('resetBtn').addEventListener('click', resetAll);
-  document.getElementById('exportBtn').addEventListener('click', exportJson);
-  dateInput.addEventListener('change', render);
-
-  // --- Başlangıç yükleme ---
-  try{
-    localData = await load();
-    render();
-    overlay.style.display='none';
-    appRoot.style.display='block';
-  }catch(err){
-    console.error(err); alert('Veriler yüklenirken hata oluştu: '+(err.message||err));
-  }
-
+dateInput.addEventListener('change',render);
+render();
 })();
 </script>
 </body>
