@@ -107,46 +107,41 @@
     {id:'kemal', name:'Kemal'}
   ];
 
-  const API_URL = "https://script.google.com/macros/s/AKfycbxP9b9DVISe8YybJp6_e_KTRmRTUxMbKVVaBzljlXnRi2HmgAPht9RRxthLHjV8iHqq/exec";
-  const dateInput = document.getElementById('datePicker');
-  const todayISO = ()=> new Date().toISOString().slice(0,10);
-  dateInput.value = todayISO();
+const API_URL = "https://script.google.com/macros/s/AKfycbxP9b9DVISe8YybJp6_e_KTRmRTUxMbKVVaBzljlXnRi2HmgAPht9RRxthLHjV8iHqq/exec";
 
-  async function load() {
-    try {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      // data.users dizisi değil, Google Sheets verisini mapliyoruz
-      const obj = {users:{}};
-      data.users.forEach(u => {
-        // byDate'yi JSON.parse ile objeye çevir
-        let byDate = {};
-        try { byDate = JSON.parse(u.byDate||"{}"); } catch(e){}
-        obj.users[u.id] = {name:u.name, total: Number(u.total||0), byDate};
-      });
-      return obj;
-    } catch(e){
-      alert("Veri çekilemedi!");
-      return {users:{}};
-    }
-  }
-
-  async function increment(userId){
-    const data = await load();
-    const day = dateInput.value || todayISO();
-    const user = data.users[userId];
-    user.byDate[day] = (user.byDate[day] || 0) + 1;
-    user.total = Object.values(user.byDate).reduce((a,b)=>a+b,0);
-
-    // Google Sheets'e POST gönder
-    await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({id:userId, total:user.total, byDate:JSON.stringify(user.byDate)}),
-      headers: {"Content-Type":"application/json"}
+async function load() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    const obj = {users:{}};
+    data.users.forEach(u => {
+      let byDate = {};
+      try { byDate = JSON.parse(u.byDate||"{}"); } catch(e){}
+      obj.users[u.id] = {name:u.name, total: Number(u.total||0), byDate};
     });
-
-    render();
+    return obj;
+  } catch(e){
+    alert("Veri çekilemedi!");
+    return {users:{}};
   }
+}
+
+async function increment(userId){
+  const data = await load();
+  const day = dateInput.value || todayISO();
+  const user = data.users[userId];
+  user.byDate[day] = (user.byDate[day] || 0) + 1;
+  user.total = Object.values(user.byDate).reduce((a,b)=>a+b,0);
+
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({id:userId, total:user.total, byDate:JSON.stringify(user.byDate)}),
+    headers: {"Content-Type":"application/json"}
+  });
+
+  render();
+}
+
 
   function renderCards(data){
     const wrap=document.getElementById('cards');wrap.innerHTML='';
@@ -223,5 +218,6 @@
 
 </body>
 </html>
+
 
 
