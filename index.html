@@ -52,7 +52,6 @@
   </style>
 </head>
 <body>
-  <!-- Loading overlay (3 saniye görünür) -->
   <div id="overlay" class="overlay" aria-hidden="true">
     <div class="spinner" role="img" aria-label="yükleniyor"></div>
     <div class="text">Veriler yükleniyor…</div>
@@ -119,18 +118,14 @@
   const todayISO = ()=> new Date().toISOString().slice(0,10);
   dateInput.value = todayISO();
 
+  let localData = null; // <<< burası önemli, artık tek kaynak
+
   async function safeFetch(url, opts){
     try{
       const res = await fetch(url, opts);
-      if(!res.ok){
-        const text = await res.text().catch(()=>res.statusText);
-        throw new Error(res.status + ' ' + res.statusText + ' — ' + text);
-      }
+      if(!res.ok){ const text = await res.text().catch(()=>res.statusText); throw new Error(res.status + ' ' + res.statusText + ' — ' + text);}
       return res;
-    }catch(err){
-      console.error('Fetch hata:', err);
-      throw err;
-    }
+    }catch(err){ console.error('Fetch hata:', err); throw err; }
   }
 
   async function load(){
@@ -139,8 +134,7 @@
     const obj = {users:{}};
     for(const u of USERS) obj.users[u.id] = {name:u.name, total:0, byDate:{}};
     raw.forEach(row=>{
-      const id = String(row.id||'').trim();
-      if(!id) return;
+      const id = String(row.id||'').trim(); if(!id) return;
       let byDate = {};
       try { byDate = row.byDate ? JSON.parse(row.byDate) : {}; } catch(e){ byDate = {}; }
       obj.users[id] = { name: row.name || (USERS.find(x=>x.id===id)||{name:id}).name, total: Number(row.total||0), byDate };
@@ -153,14 +147,10 @@
       id: payload.id,
       name: payload.name,
       total: payload.total,
-      byDate: (typeof payload.byDate === 'string') ? payload.byDate : JSON.stringify(payload.byDate)
+      byDate: JSON.stringify(payload.byDate)
     } ] };
     const url = API_URL + '/id/' + encodeURIComponent(id);
-    await safeFetch(url, {
-      method: 'PUT',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(body)
-    });
+    await safeFetch(url, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
   }
 
   async function appendRow(payload){
@@ -168,26 +158,18 @@
       id: payload.id,
       name: payload.name,
       total: payload.total,
-      byDate: (typeof payload.byDate === 'string') ? payload.byDate : JSON.stringify(payload.byDate)
+      byDate: JSON.stringify(payload.byDate)
     } ] };
-    await safeFetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(body)
-    });
+    await safeFetch(API_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
   }
 
-  // --- DÜZELTİLMİŞ increment ---
+  // --- SORUN ÇÖZÜLDÜ: art arda +1 olacak ---
   async function increment(userId){
     try{
-      const data = await load();
-      const user = data.users[userId] || {name:userId, total:0, byDate:{}};
+      if(!localData) localData = await load();
+      const user = localData.users[userId] || {name:userId, total:0, byDate:{}};
       const day = dateInput.value || todayISO();
-
-      const currentByDate = {...user.byDate};
-      currentByDate[day] = (currentByDate[day] || 0) + 1;
-      user.byDate = currentByDate;
-
+      user.byDate[day] = (user.byDate[day] || 0) + 1;
       user.total = Object.values(user.byDate).reduce((a,b)=>a+b,0);
 
       try{
@@ -196,40 +178,27 @@
         await appendRow({ id: userId, name: user.name, total: user.total, byDate: user.byDate });
       }
 
-      await render();
-    }catch(err){
-      alert('Puan eklenirken hata oldu: '+ (err.message||err));
-    }
+      await render(); // güncel localData ile render
+    }catch(err){ alert('Puan eklenirken hata oldu: '+(err.message||err)); }
   }
 
   async function resetUser(userId){
     try{
       const payload = { id:userId, name: USERS.find(u=>u.id===userId)?.name || userId, total:0, byDate:{} };
-      try{
-        await updateRow(userId, payload);
-      }catch(e){
-        await appendRow(payload);
-      }
+      try{ await updateRow(userId, payload); } catch(e){ await appendRow(payload); }
+      if(localData) localData.users[userId] = payload;
       await render();
-    }catch(err){
-      alert('Kullanıcı sıfırlanırken hata: '+(err.message||err));
-    }
+    }catch(err){ alert('Kullanıcı sıfırlanırken hata: '+(err.message||err)); }
   }
 
   async function resetAll(){
     if(!confirm('Tüm istatistikleri sıfırlamak istediğine emin misin?')) return;
-    try{
-      for(const u of USERS){
-        await resetUser(u.id);
-      }
-      alert('Tüm kullanıcılar sıfırlandı.');
-    }catch(err){
-      alert('Sıfırlama sırasında hata: '+(err.message||err));
-    }
+    for(const u of USERS){ await resetUser(u.id); }
+    alert('Tüm kullanıcılar sıfırlandı.');
   }
 
   async function exportJson(){
-    const data = await load();
+    const data = localData || await load();
     const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href=url; a.download='rezil-sayaci-'+todayISO()+'.json'; a.click(); URL.revokeObjectURL(url);
@@ -319,25 +288,29 @@
 
   async function render(){
     try{
-      const data = await load();
-      renderCards(data);
-      renderLeaderboard(data);
-      renderDayBoard(data);
-      renderLogs(data);
-    }catch(err){
-      console.error('Render hata:', err);
-    }
+      if(!localData) localData = await load();
+      renderCards(localData);
+      renderLeaderboard(localData);
+      renderDayBoard(localData);
+      renderLogs(localData);
+    }catch(err){ console.error(err); alert('Görüntüleme sırasında hata: ' + (err.message || err)); }
   }
 
-  dateInput.addEventListener('change', ()=>render());
-  document.getElementById('resetBtn').addEventListener('click', ()=>resetAll());
-  document.getElementById('exportBtn').addEventListener('click', ()=>exportJson());
+  document.getElementById('resetBtn').addEventListener('click', resetAll);
+  document.getElementById('exportBtn').addEventListener('click', exportJson);
+  dateInput.addEventListener('change', render);
 
-  setTimeout(()=>{ overlay.style.display='none'; appRoot.style.display='block'; },3000);
-  await render();
+  // --- Başlangıç yükleme ---
+  try{
+    localData = await load();
+    render();
+    overlay.style.display='none';
+    appRoot.style.display='block';
+  }catch(err){
+    console.error(err); alert('Veriler yüklenirken hata oluştu: '+(err.message||err));
+  }
 
 })();
 </script>
-
 </body>
 </html>
