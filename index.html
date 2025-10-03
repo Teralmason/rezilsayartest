@@ -58,6 +58,7 @@ input[type=date]{padding:6px;border-radius:8px;border:1px solid rgba(255,255,255
 <label class="small-muted">Gün:</label>
 <input id="datePicker" type="date" />
 </div>
+<button id="resetAllBtn" class="btn ghost">Tümünü Sıfırla</button>
 </div>
 </header>
 <main class="grid">
@@ -134,6 +135,29 @@ async function increment(userId){
   render();
 }
 
+// Yeni: tüm kullanıcıları stock hale getir
+async function resetAll() {
+  if (!confirm("Tüm kullanıcıları sıfırlamak istediğine emin misin?")) return;
+  for (const u of USERS) {
+    const payload = {
+      id: u.id,
+      name: u.name,
+      total: 0,
+      byDate: JSON.stringify({})
+    };
+    try {
+      await fetch(`${API_URL}/id/${encodeURIComponent(u.id)}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({data: [payload]})
+      });
+    } catch (e) {
+      console.error("Sıfırlama hatası:", e);
+    }
+  }
+  render();
+}
+
 // Render fonksiyonları
 function renderCards(data){
   const wrap=document.getElementById('cards');wrap.innerHTML='';
@@ -182,6 +206,7 @@ async function render(){
 }
 
 dateInput.addEventListener('change',render);
+document.getElementById('resetAllBtn').addEventListener('click', resetAll);
 render();
 })();
 </script>
