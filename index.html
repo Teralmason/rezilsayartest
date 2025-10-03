@@ -135,7 +135,7 @@ async function increment(userId){
   render();
 }
 
-// Yeni: tüm kullanıcıları stock hale getir
+// Tüm kullanıcıları stock hale getir
 async function resetAll() {
   if (!confirm("Tüm kullanıcıları sıfırlamak istediğine emin misin?")) return;
   for (const u of USERS) {
@@ -198,11 +198,40 @@ function renderDayBoard(data){
   });
 }
 
+function renderLogs(data){
+  const logsEl=document.getElementById('logs');
+  logsEl.innerHTML='';
+  for(const u of USERS){
+    const user=data.users[u.id];
+    const dates=Object.keys(user.byDate).sort();
+    if(dates.length===0){
+      logsEl.innerHTML+=`<div class="small">${user.name}: hiç kayıt yok</div>`;
+      continue;
+    }
+    const details=document.createElement('details');
+    const summary=document.createElement('summary');
+    summary.textContent = user.name;
+    details.appendChild(summary);
+    const table=document.createElement('table');
+    const head=document.createElement('tr');
+    head.innerHTML=`<th>Tarih</th><th>Adet</th>`;
+    table.appendChild(head);
+    dates.forEach(d=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${d}</td><td>${user.byDate[d]}</td>`;
+      table.appendChild(tr);
+    });
+    details.appendChild(table);
+    logsEl.appendChild(details);
+  }
+}
+
 async function render(){
   const data=await load();
   renderCards(data);
   renderLeaderboard(data);
   renderDayBoard(data);
+  renderLogs(data);
 }
 
 dateInput.addEventListener('change',render);
